@@ -10,6 +10,14 @@ builder.Services.AddControllers(option =>
 {
     option.ReturnHttpNotAcceptable = true;
 }).AddXmlDataContractSerializerFormatters().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+builder.Services.AddCors(options => {
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.AllowAnyMethod();
+        builder.AllowAnyOrigin();
+    });
+
+});
 builder.Services.ConfigureLibrary(builder.Configuration);
 builder.Services.ConfigureDb(builder.Configuration);
 builder.Services.ConfigureServices(builder.Configuration);
@@ -24,6 +32,7 @@ var app = builder.Build();
 //{
     app.UseSwagger();
     app.UseSwaggerUI();
+app.UseCors();
 //}
 
 app.UseHttpsRedirection();
