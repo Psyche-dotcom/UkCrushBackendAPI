@@ -1,5 +1,6 @@
 ﻿using Data.Repository.Interface;
 using Dating.API.Service.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dating.API.Controllers
@@ -16,7 +17,7 @@ namespace Dating.API.Controllers
             _pay = pay;
             _paydb = paydb;
         }
-
+        [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpPost("create/buy_minute")]
         public async Task<IActionResult> GetOrder(string paymentType, string user_id)
         {
@@ -56,13 +57,14 @@ namespace Dating.API.Controllers
                 return BadRequest(result);
             }
         }
-
+        [Authorize(AuthenticationSchemes = "Bearer", Roles ="ADMIN")]
         [HttpGet("get-payment-by-orderId")]
         public async Task<IActionResult> GetPaymentByOrderId(string OrderId)
         {
             var data = await _paydb.GetPaymentById(OrderId);
             return Ok(data);
         }
+        [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpGet("user/all/{user_id}")]
         public async Task<IActionResult> UserPaymentHistory(string user_id)
         {
@@ -80,6 +82,7 @@ namespace Dating.API.Controllers
                 return BadRequest(result);
             }
         }
+        [Authorize(AuthenticationSchemes = "Bearer", Roles ="ADMIN")]
         [HttpGet("user/all")]
         public async Task<IActionResult> AllPaymentHistory()
         {

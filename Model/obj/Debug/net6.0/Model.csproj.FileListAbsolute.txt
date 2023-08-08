@@ -58,3 +58,15 @@ C:\Users\bsahe\Documents\Git_Project\DatingSiteLatest\Backend\Model\obj\Debug\ne
 C:\Users\bsahe\Documents\Git_Project\DatingSiteLatest\Backend\Model\obj\Debug\net6.0\refint\Model.dll
 C:\Users\bsahe\Documents\Git_Project\DatingSiteLatest\Backend\Model\obj\Debug\net6.0\Model.pdb
 C:\Users\bsahe\Documents\Git_Project\DatingSiteLatest\Backend\Model\obj\Debug\net6.0\ref\Model.dll
+C:\Users\bsahe\Documents\Git_Project\UkCrushBackendAPI\Model\bin\Debug\net6.0\Model.deps.json
+C:\Users\bsahe\Documents\Git_Project\UkCrushBackendAPI\Model\bin\Debug\net6.0\Model.dll
+C:\Users\bsahe\Documents\Git_Project\UkCrushBackendAPI\Model\bin\Debug\net6.0\Model.pdb
+C:\Users\bsahe\Documents\Git_Project\UkCrushBackendAPI\Model\obj\Debug\net6.0\Model.csproj.AssemblyReference.cache
+C:\Users\bsahe\Documents\Git_Project\UkCrushBackendAPI\Model\obj\Debug\net6.0\Model.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\bsahe\Documents\Git_Project\UkCrushBackendAPI\Model\obj\Debug\net6.0\Model.AssemblyInfoInputs.cache
+C:\Users\bsahe\Documents\Git_Project\UkCrushBackendAPI\Model\obj\Debug\net6.0\Model.AssemblyInfo.cs
+C:\Users\bsahe\Documents\Git_Project\UkCrushBackendAPI\Model\obj\Debug\net6.0\Model.csproj.CoreCompileInputs.cache
+C:\Users\bsahe\Documents\Git_Project\UkCrushBackendAPI\Model\obj\Debug\net6.0\Model.dll
+C:\Users\bsahe\Documents\Git_Project\UkCrushBackendAPI\Model\obj\Debug\net6.0\refint\Model.dll
+C:\Users\bsahe\Documents\Git_Project\UkCrushBackendAPI\Model\obj\Debug\net6.0\Model.pdb
+C:\Users\bsahe\Documents\Git_Project\UkCrushBackendAPI\Model\obj\Debug\net6.0\ref\Model.dll
