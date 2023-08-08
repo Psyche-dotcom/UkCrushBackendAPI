@@ -14,7 +14,7 @@ namespace Dating.API.Extension
             services.AddScoped<IAccountRepo, AccountRepo>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IGenerateJwt, GenerateJwt>();
-            services.AddScoped<IPayments, Payments>();
+            services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<ICloudinaryService, CloudinaryService>();
             services.AddScoped<IPaymentRepo, PaymentRepo>();
             services.AddAutoMapper(typeof(ProjectProfile));
@@ -25,8 +25,6 @@ namespace Dating.API.Extension
             services.AddScoped<ICallRecordService, CallRecordService>();
             services.AddScoped<ITimerRepo, TimerRepo>();
             services.AddScoped<ITimerService, TimerService>();
-            //services.AddSingleton(configuration);
-            services.AddScoped<IPayPalService, PayPalService>();
         }
     }
 }

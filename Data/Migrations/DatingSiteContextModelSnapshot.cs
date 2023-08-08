@@ -50,21 +50,21 @@ namespace Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "2c4f83f8-9a72-4b02-816e-cea1c2751b7e",
+                            Id = "e7413c01-955c-4b44-89d9-d3c002c7c647",
                             ConcurrencyStamp = "1",
                             Name = "ADMIN",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "866b72e6-9a84-4f69-8fef-66f50d5a3ad6",
+                            Id = "09331b03-5611-4a16-b126-42cd6a1a846d",
                             ConcurrencyStamp = "2",
                             Name = "USER",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "5c48894f-4da2-4a78-8bf6-47ae1ea93231",
+                            Id = "5cb4753e-b341-4d21-b6a2-f186d515b8fc",
                             ConcurrencyStamp = "3",
                             Name = "CAMGIRL",
                             NormalizedName = "CAMGIRL"
@@ -309,6 +309,12 @@ namespace Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("CompletePaymentTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedPaymentTime")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
@@ -316,14 +322,15 @@ namespace Data.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTime>("PaymentTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("PaymentType")
+                    b.Property<string>("OrderReferenceId")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("ReferenceNumber")
+                    b.Property<string>("PaymentStatus")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PaymentType")
                         .IsRequired()
                         .HasColumnType("text");
 

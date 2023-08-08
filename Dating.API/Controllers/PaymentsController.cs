@@ -1,63 +1,101 @@
 ﻿using Data.Repository.Interface;
 using Dating.API.Service.Interface;
 using Microsoft.AspNetCore.Mvc;
-using Model.Enum;
 
 namespace Dating.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/payment")]
     [ApiController]
     public class PaymentsController : ControllerBase
     {
-        private readonly IPayments _pay;
+        private readonly IPaymentService _pay;
         private readonly IPaymentRepo _paydb;
 
-        public PaymentsController(IPayments pay, IPaymentRepo paydb)
+        public PaymentsController(IPaymentService pay, IPaymentRepo paydb)
         {
             _pay = pay;
             _paydb = paydb;
         }
 
-        [HttpGet("get-OrderId")]
-        public async Task<IActionResult> GetOrder(string paymentType, string currency, string description)
+        [HttpPost("create/buy_minute")]
+        public async Task<IActionResult> GetOrder(string paymentType, string user_id)
         {
-            Amount amount = paymentType == "Type1" ? Amount.Type1 : paymentType == "Type2" ? Amount.Type2 : paymentType == "Type3" ? Amount.Type3 : 0.00;
 
-            var data = await _pay.MakeOrder((decimal)amount, currency, description);
-            if (data == null)
+            var result = await _pay.MakeOrder(paymentType, user_id);
+
+            if (result.StatusCode == 200 || result.StatusCode == 201)
             {
-                return Problem("Order not set");
+                return Ok(result);
+            }
+            else if (result.StatusCode == 404)
+            {
+                return NotFound(result);
             }
             else
-                return Ok(data.Result.Links.ToDictionary(links => links.Rel, links => links.Href));
+            {
+                return BadRequest(result);
+            }
+
+
         }
 
-        [HttpPost("confirm-payment")]
-        public async Task<IActionResult> ConfirmPayment(string OrderId)
+        [HttpGet("webhook/confirm-payment")]
+        public async Task<IActionResult> ConfirmPayment(string token)
         {
-            var data = await _pay.ConfirmPayment(OrderId);
-            return Ok(data);
-        }
-
-        [HttpGet("check-active-payment")]
-        public async Task<IActionResult> CheckActivePayment(string OrderId)
-        {
-            var data = await _paydb.IsPaymentActive(OrderId);
-            return Ok(data);
-        }
-
-        [HttpPut("deactivate-payment")]
-        public async Task<IActionResult> DeactivatePayment(string OrderId)
-        {
-            var data = _paydb.DeactivatePayment(OrderId);
-            return Ok(data);
+            var result = await _pay.ConfirmPayment(token);
+            if (result.StatusCode == 200)
+            {
+                return Ok(result);
+            }
+            else if (result.StatusCode == 404)
+            {
+                return NotFound(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
         }
 
         [HttpGet("get-payment-by-orderId")]
         public async Task<IActionResult> GetPaymentByOrderId(string OrderId)
         {
-            var data = _paydb.GetPaymentById(OrderId);
+            var data = await _paydb.GetPaymentById(OrderId);
             return Ok(data);
+        }
+        [HttpGet("user/all/{user_id}")]
+        public async Task<IActionResult> UserPaymentHistory(string user_id)
+        {
+            var result = await _pay.RetrieveUserAllPaymentAsync(user_id);
+            if (result.StatusCode == 200)
+            {
+                return Ok(result);
+            }
+            else if (result.StatusCode == 404)
+            {
+                return NotFound(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
+        }
+        [HttpGet("user/all")]
+        public async Task<IActionResult> AllPaymentHistory()
+        {
+            var result = await _pay.RetrieveAllPaymentAsync();
+            if (result.StatusCode == 200)
+            {
+                return Ok(result);
+            }
+            else if (result.StatusCode == 404)
+            {
+                return NotFound(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
         }
     }
 }

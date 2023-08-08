@@ -1,8 +1,8 @@
 ﻿using Data.Context;
 using Data.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
+using Model.DTO;
 using Model.Enitities;
-using PayPalCheckoutSdk.Orders;
 
 namespace Data.Repository.Implementation
 {
@@ -15,50 +15,75 @@ namespace Data.Repository.Implementation
             _context = context;
         }
 
-        public async Task<Payments> GetPaymentById(string OrderId)
+        public async Task<Payments> GetPaymentById(string OrderReferenceId)
         {
-            return await _context.Payments.FirstOrDefaultAsync(x => x.ReferenceNumber == OrderId);
+            return await _context.Payments.FirstOrDefaultAsync(x => x.OrderReferenceId == OrderReferenceId);
         }
-
-        public Payments AddPayments(Order order)
+        public async Task<IEnumerable<PaymentWithUserInfo>> RetrieveAllPaymentAsync()
         {
-            try
+            var payment = await _context.Payments.Include(u => u.User).Select(p => new PaymentWithUserInfo
             {
-                var data = new Payments()
+                Id = p.Id,
+                Amount = p.Amount,
+                OrderReferenceId = p.OrderReferenceId,
+                Description = p.Description,
+                PaymentType = p.PaymentType,
+                CreatedPaymentTime = p.CreatedPaymentTime,
+                CompletePaymentTime = p.CompletePaymentTime,
+                IsActive = p.IsActive,
+                UserId = p.UserId,
+                PaymentStatus = p.PaymentStatus,
+                UserName = p.User.UserName,
+                FirstName = p.User.FirstName,
+                Email = p.User.Email
+            }).ToListAsync();
+            return payment;
+        }
+        public async Task<IEnumerable<PaymentWithUserInfo>> RetrieveUserAllPaymentAsync(string userid)
+        {
+            var paymentsWithUserInfo = await _context.Payments
+                .Include(p => p.User)
+                .Where(p => p.UserId == userid)
+                .Select(p => new PaymentWithUserInfo
                 {
-                    Id = Guid.NewGuid().ToString(),
-                    ReferenceNumber = order.Id,
-                    Amount = order.PurchaseUnits.First(x => x.AmountWithBreakdown != null).AmountWithBreakdown.Value,
-                    //Description = "Payment",
-                    IsActive = true,
-                    PaymentTime = DateTime.Now,
-                    PaymentType = "payment-type",
-                    UserId = Guid.NewGuid().ToString() + "null user",
-                };
+                    Id = p.Id,
+                    Amount = p.Amount,
+                    OrderReferenceId = p.OrderReferenceId,
+                    Description = p.Description,
+                    UserId= p.UserId,
+                    PaymentType = p.PaymentType,
+                    CreatedPaymentTime = p.CreatedPaymentTime,
+                    CompletePaymentTime = p.CompletePaymentTime,
+                    IsActive = p.IsActive,
+                    PaymentStatus = p.PaymentStatus,
+                    UserName = p.User.UserName,
+                    FirstName = p.User.FirstName,
+                    Email = p.User.Email
+                })
+                .ToListAsync();
 
-                _context.Payments.Add(data);
-                return _context.SaveChanges() > 0 ? data : null;
-            }
-            catch (Exception ex)
+            return paymentsWithUserInfo;
+        }
+
+
+        public async Task<bool> AddPayments(Payments payments)
+        {
+            await _context.Payments.AddAsync(payments);
+            if ( await _context.SaveChangesAsync() > 0)
             {
-                return new Payments()
-                {
-                    Description = ex.Message,
-                };
+                return true;
             }
+            return false;
         }
 
-        public async Task<bool> IsPaymentActive(string orderId)
+        public async Task<bool> UpdatePayments(Payments payments)
         {
-            return _context.Payments.FirstOrDefault(x => x.ReferenceNumber == orderId).IsActive;
-        }
-
-        public bool DeactivatePayment(string orderId)
-        {
-            var data = _context.Payments.FirstOrDefault(x => x.ReferenceNumber == orderId);
-            data.IsActive = false;
-            _context.Payments.Update(data);
-            return _context.SaveChanges() > 0;
+             _context.Payments.Update(payments);
+            if ( await _context.SaveChangesAsync() > 0)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
