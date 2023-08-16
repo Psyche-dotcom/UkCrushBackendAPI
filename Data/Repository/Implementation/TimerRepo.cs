@@ -117,7 +117,7 @@ namespace Data.Repository.Implementation
                 UserId = g.Key,
                 TotalTime = g.Sum(cr => cr.TimeBought)
             })
-            .OrderByDescending(g => g.TotalTime)
+            .OrderBy(g => g.TotalTime)
             .Take(topcount)
             .ToListAsync();
             var userIds = topUsers.Select(u => u.UserId).ToList();

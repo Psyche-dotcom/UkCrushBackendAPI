@@ -50,21 +50,21 @@ namespace Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "e7413c01-955c-4b44-89d9-d3c002c7c647",
+                            Id = "2be652d5-3f7d-4b72-b3c3-1e9e7bbb3081",
                             ConcurrencyStamp = "1",
                             Name = "ADMIN",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "09331b03-5611-4a16-b126-42cd6a1a846d",
+                            Id = "acb909b8-5873-4ffc-a9ca-6d4de2133757",
                             ConcurrencyStamp = "2",
                             Name = "USER",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "5cb4753e-b341-4d21-b6a2-f186d515b8fc",
+                            Id = "f00a3d90-b741-4662-b78d-8ad4b0891e0d",
                             ConcurrencyStamp = "3",
                             Name = "CAMGIRL",
                             NormalizedName = "CAMGIRL"
@@ -246,6 +246,9 @@ namespace Data.Migrations
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
+
+                    b.Property<bool>("SuspendUser")
+                        .HasColumnType("boolean");
 
                     b.Property<int>("TimeAvailable")
                         .HasColumnType("integer");

@@ -6,7 +6,7 @@ namespace Dating.API.Service.Interface
     {
         Task<ResponseDto<string>> RegisterUser(SignUp signUp, string Role);
 
-        Task<ResponseDto<string>> LoginUser(SignInModel signIn);
+        Task<ResponseDto<LoginResultDto>> LoginUser(SignInModel signIn);
 
         Task<ResponseDto<string>> LogoutUser(string UserEmail);
 
@@ -21,7 +21,10 @@ namespace Dating.API.Service.Interface
         Task<ResponseDto<string>> UpdateUser(string email, UpdateUserDto updateUser);
 
         Task<ResponseDto<string>> UploadUserProfilePicture(string email, IFormFile file);
-
+        Task<ResponseDto<string>> SuspendUserAsync(string useremail);
+        Task<ResponseDto<string>> UnSuspendUserAsync(string useremail);
         Task<ResponseDto<string>> UpdateUserRole(string email, string role);
+
+        Task<ResponseDto<DisplayFindUserDTO>> GetUserFullDetails(string userid);
     }
 }

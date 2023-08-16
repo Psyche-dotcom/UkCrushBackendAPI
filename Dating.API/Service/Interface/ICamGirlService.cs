@@ -4,7 +4,7 @@ namespace Dating.API.Service.Interface
 {
     public interface ICamGirlService
     {
-        Task<ResponseDto<PaginatedUser>> GetCamGirlsAvailableAsync(int pageNumber, int perPageSize, CamgirlPreference camgirl);
+        Task<ResponseDto<PaginatedUser>> GetCamGirlsAvailableAsync(int pageNumber, int perPageSize);
 
         Task<ResponseDto<string>> SetCamgirlAsTaken(string camGirlEmail);
 

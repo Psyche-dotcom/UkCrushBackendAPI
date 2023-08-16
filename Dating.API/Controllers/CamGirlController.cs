@@ -25,9 +25,9 @@ namespace Dating.API.Controllers
         }
 
         [HttpPost("available/{page_number}")]
-        public async Task<IActionResult> GetCamGirlAvailableAsync(int page_number, CamgirlPreference camgirl)
+        public async Task<IActionResult> GetCamGirlAvailableAsync(int page_number)
         {
-            var cacheKey = $"GetCamGirlAvailableAsync_{page_number}_{camgirl.Age}_{camgirl.Gender}_{camgirl.Location}";
+            var cacheKey = $"GetCamGirlAvailableAsync_{page_number}";
             if (_cache.TryGetValue(cacheKey, out ResponseDto<PaginatedUser> result))
             {
                 return Ok(result);
@@ -48,7 +48,7 @@ namespace Dating.API.Controllers
                         .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
                         .SetPriority(CacheItemPriority.Normal)
                         .SetSize(1024);
-                        result = await _camGirlService.GetCamGirlsAvailableAsync(page_number, 5, camgirl);
+                        result = await _camGirlService.GetCamGirlsAvailableAsync(page_number, 5);
                         _cache.Set(cacheKey, result, cacheEntryOptions);
                         if (result.StatusCode == 200)
                         {
@@ -114,7 +114,7 @@ namespace Dating.API.Controllers
         }
 
         [HttpPost("match")]
-        public async Task<IActionResult> MatchCamgirl(MatchGirlDto matchGirl, int age, Gender gender, string location)
+        public async Task<IActionResult> MatchCamgirl(MatchGirlDto matchGirl)
         {
             var result = await _camGirlService.SetCamgirlAsTaken(matchGirl.Email);
             try
@@ -122,7 +122,7 @@ namespace Dating.API.Controllers
                 await semaphore.WaitAsync();
                 for (int pageNumber = 1; pageNumber <= 100; pageNumber++)
                 {
-                    var cacheKey = $"GetCamGirlAvailableAsync_{pageNumber}_{age}_{gender}_{location}";
+                    var cacheKey = $"GetCamGirlAvailableAsync_{pageNumber}";
                     _cache.Remove(cacheKey);
                     for (int pageSize = 1; pageSize <= 100; pageSize++)
                     {
@@ -149,7 +149,7 @@ namespace Dating.API.Controllers
         }
 
         [HttpPost("unmatch/{email}")]
-        public async Task<IActionResult> UnMatchCamgirl(string email, int age, Gender gender, string location)
+        public async Task<IActionResult> UnMatchCamgirl(string email)
         {
             var result = await _camGirlService.SetCamgirlAsNotTaken(email);
             try
@@ -157,7 +157,7 @@ namespace Dating.API.Controllers
                 await semaphore.WaitAsync();
                 for (int pageNumber = 1; pageNumber <= 100; pageNumber++)
                 {
-                    var cacheKey = $"GetCamGirlAvailableAsync_{pageNumber}_{age}_{gender}_{location}";
+                    var cacheKey = $"GetCamGirlAvailableAsync_{pageNumber}";
                     _cache.Remove(cacheKey);
                     for (int pageSize = 1; pageSize <= 100; pageSize++)
                     {

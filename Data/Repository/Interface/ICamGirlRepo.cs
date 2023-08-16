@@ -5,7 +5,7 @@ namespace Data.Repository.Interface
 {
     public interface ICamGirlRepo
     {
-        Task<PaginatedUser> GetCamGirlsAvailableAsync(int pageNumber, int perPageSize, CamgirlPreference camgirl);
+        Task<PaginatedUser> GetCamGirlsAvailableAsync(int pageNumber, int perPageSize);
 
         Task<ApplicationUser> FindCamGirlbyUserName(string userName);
 

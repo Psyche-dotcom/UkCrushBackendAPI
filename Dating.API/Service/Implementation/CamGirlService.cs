@@ -20,12 +20,12 @@ namespace Dating.API.Service.Implementation
             _mapper = mapper;
         }
 
-        public async Task<ResponseDto<PaginatedUser>> GetCamGirlsAvailableAsync(int pageNumber, int perPageSize, CamgirlPreference camgirl)
+        public async Task<ResponseDto<PaginatedUser>> GetCamGirlsAvailableAsync(int pageNumber, int perPageSize)
         {
             var response = new ResponseDto<PaginatedUser>();
             try
             {
-                var getCAMGIRL = await _camGirlRepo.GetCamGirlsAvailableAsync(pageNumber, perPageSize, camgirl);
+                var getCAMGIRL = await _camGirlRepo.GetCamGirlsAvailableAsync(pageNumber, perPageSize);
                 if (!getCAMGIRL.User.Any())
                 {
                     response.ErrorMessages = new List<string>() { "Cam girl not available with the preference provided" };
@@ -157,7 +157,7 @@ namespace Dating.API.Service.Implementation
                 var findCamgirl = await _camGirlRepo.FindCamGirlbyUserName(userName);
                 if (findCamgirl == null)
                 {
-                    response.ErrorMessages = new List<string>() { "Cam girl not available with the preference provided" };
+                    response.ErrorMessages = new List<string>() { "Please check back, Cam girl not available" };
                     response.StatusCode = 404;
                     response.DisplayMessage = "Error";
                     return response;

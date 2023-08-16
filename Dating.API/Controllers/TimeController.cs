@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Model.DTO;
 using Model.Enitities;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Dating.API.Controllers
 {
@@ -63,6 +64,7 @@ namespace Dating.API.Controllers
         [HttpGet("most/{count}")]
         public async Task<IActionResult> GetTopUserWithMinute(int count)
         {
+            
             var cacheKey = $"GetTopUserWithMinute_{count}";
             if (_cache.TryGetValue(cacheKey, out ResponseDto<IEnumerable<UserTimeBuyDto>> result))
             {
@@ -193,10 +195,15 @@ namespace Dating.API.Controllers
             }
         }
 
-        [AllowAnonymous]
+        
         [HttpGet("verify/status/{user_id}")]
-        public async Task<IActionResult> VerifyUserTimeAvailableAsync(string user_id)
+        public async Task<IActionResult> VerifyUserTimeAvailableAsync(string? user_id)
+
         {
+            if (user_id == null)
+            {
+                user_id = User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti).Value;
+            }
             var cacheKey = $"VerifyUserTimeAvailableAsync_{user_id}";
             if (_cache.TryGetValue(cacheKey, out ResponseDto<UserTimeAvailableDto> result))
             {
@@ -214,7 +221,7 @@ namespace Dating.API.Controllers
                     else
                     {
                         var cacheEntryOptions = new MemoryCacheEntryOptions()
-                        .SetSlidingExpiration(TimeSpan.FromSeconds(120))
+                        .SetSlidingExpiration(TimeSpan.FromSeconds(30))
                         .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
                         .SetPriority(CacheItemPriority.Normal)
                         .SetSize(1024);

@@ -19,7 +19,7 @@ namespace Data.Repository.Implementation
             _roleManager = roleManager;
             _context = context;
         }
-
+        
         public async Task<bool> AddRoleAsync(ApplicationUser user, string Role)
         {
             var AddRole = await _userManager.AddToRoleAsync(user, Role);
@@ -147,7 +147,7 @@ namespace Data.Repository.Implementation
             pageNumber = pageNumber < 1 ? 1 : pageNumber;
             perPageSize = perPageSize < 1 ? 5 : perPageSize;
 
-            var filteredCamgirl = _userManager.Users
+            var filteredUser = _userManager.Users
                 .Join(
                     _context.UserRoles,
                     user => user.Id,
@@ -172,10 +172,10 @@ namespace Data.Repository.Implementation
                     TimeAvailable = u.User.TimeAvailable
                 });
 
-            var totalCount = await filteredCamgirl.CountAsync();
+            var totalCount = await filteredUser.CountAsync();
             var totalPages = (int)Math.Ceiling((double)totalCount / perPageSize);
 
-            var paginatedCamgirl = await filteredCamgirl
+            var paginatedUser = await filteredUser
                 .Skip((pageNumber - 1) * perPageSize)
                 .Take(perPageSize)
                 .ToListAsync();
@@ -184,7 +184,7 @@ namespace Data.Repository.Implementation
                 CurrentPage = pageNumber,
                 PageSize = perPageSize,
                 TotalPages = totalPages,
-                User = paginatedCamgirl,
+                User = paginatedUser,
             };
             return result;
         }

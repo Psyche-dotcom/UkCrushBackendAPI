@@ -14,6 +14,7 @@ namespace Model.Enitities
         public int TimeAvailable { get; set; }
         public bool IsUserOnline { get; set; } = false;
         public bool UserIsTaken { get; set; } = false;
+        public bool SuspendUser { get; set; } = false;
         public ICollection<CallRecord> CallRecords { get; set; }
         public ICollection<Timers> Timers { get; set; }
         public ICollection<Payments> Payments { get; set; }

@@ -20,7 +20,7 @@ namespace Data.Repository.Implementation
             _context = context;
         }
 
-        public async Task<PaginatedUser> GetCamGirlsAvailableAsync(int pageNumber, int perPageSize, CamgirlPreference camgirl)
+        public async Task<PaginatedUser> GetCamGirlsAvailableAsync(int pageNumber, int perPageSize)
         {
             pageNumber = pageNumber < 1 ? 1 : pageNumber;
             perPageSize = perPageSize < 1 ? 5 : perPageSize;
@@ -37,10 +37,7 @@ namespace Data.Repository.Implementation
                     role => role.Id,
                     (userRole, role) => new { User = userRole.User, Role = role })
                 .Where(u => u.Role.Name == "CAMGIRL"
-                            && u.User.Location == camgirl.Location
-                            && u.User.Age == camgirl.Age
-                            && u.User.Gender == camgirl.Gender
-                            && u.User.IsUserOnline
+                           && u.User.IsUserOnline
                             && !u.User.UserIsTaken)
                 .Select(u => new DisplayFindUserDTO
                 {

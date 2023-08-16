@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Data.Repository.Interface;
 using Dating.API.Service.Interface;
+using Microsoft.AspNetCore.Identity;
 using Model.DTO;
 using Model.Enitities;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Dating.API.Service.Implementation
 {
@@ -97,9 +99,9 @@ namespace Dating.API.Service.Implementation
             }
         }
 
-        public async Task<ResponseDto<string>> LoginUser(SignInModel signIn)
+        public async Task<ResponseDto<LoginResultDto>> LoginUser(SignInModel signIn)
         {
-            var response = new ResponseDto<string>();
+            var response = new ResponseDto<LoginResultDto>();
             try
             {
                 var checkUserExist = await _accountRepo.FindUserByEmailAsync(signIn.Email);
@@ -107,6 +109,13 @@ namespace Dating.API.Service.Implementation
                 {
                     response.ErrorMessages = new List<string>() { "There is no user with the email provided" };
                     response.StatusCode = 404;
+                    response.DisplayMessage = "Error";
+                    return response;
+                }
+                if(checkUserExist.SuspendUser == true)
+                {
+                    response.ErrorMessages = new List<string>() { "User is suspended, contact admin" };
+                    response.StatusCode = 400;
                     response.DisplayMessage = "Error";
                     return response;
                 }
@@ -134,9 +143,10 @@ namespace Dating.API.Service.Implementation
                     response.DisplayMessage = "Error";
                     return response;
                 }
+                var getUserRole = await _accountRepo.GetUserRoles(checkUserExist);
                 response.StatusCode = StatusCodes.Status200OK;
                 response.DisplayMessage = "Successfully login";
-                response.Result = generateToken;
+                response.Result = new LoginResultDto() { Jwt=generateToken, UserRole=getUserRole};
                 return response;
             }
             catch (Exception ex)
@@ -406,21 +416,18 @@ namespace Dating.API.Service.Implementation
                     return response;
                 }
                 var getExistingRoles = await _accountRepo.GetUserRoles(findUser);
-                if (getExistingRoles.Count == 0)
+                if (getExistingRoles.Count > 0)
                 {
-                    response.ErrorMessages = new List<string>() { "There is no role for this user" };
-                    response.StatusCode = StatusCodes.Status404NotFound;
-                    response.DisplayMessage = "Error";
-                    return response;
+                    var removeExistingRoles = await _accountRepo.RemoveRoleAsync(findUser, getExistingRoles);
+                    if (removeExistingRoles == false)
+                    {
+                        response.ErrorMessages = new List<string>() { "Error in removing role for user" };
+                        response.StatusCode = StatusCodes.Status400BadRequest;
+                        response.DisplayMessage = "Error";
+                        return response;
+                    }
                 }
-                var removeExistingRoles = await _accountRepo.RemoveRoleAsync(findUser, getExistingRoles);
-                if (removeExistingRoles == false)
-                {
-                    response.ErrorMessages = new List<string>() { "Error in removing role for user" };
-                    response.StatusCode = StatusCodes.Status400BadRequest;
-                    response.DisplayMessage = "Error";
-                    return response;
-                }
+                
                 var addRole = await _accountRepo.AddRoleAsync(findUser, role);
                 if (addRole == false)
                 {
@@ -438,6 +445,110 @@ namespace Dating.API.Service.Implementation
             {
                 _logger.LogError(ex.Message, ex);
                 response.ErrorMessages = new List<string>() { "Error in updating user role" };
+                response.StatusCode = 500;
+                response.DisplayMessage = "Error";
+                return response;
+            }
+        }
+        public async Task<ResponseDto<string>> SuspendUserAsync(string useremail)
+        {
+            var response = new ResponseDto<string>();
+            try
+            {
+                var findUser = await _accountRepo.FindUserByEmailAsync(useremail);
+                if (findUser == null)
+                {
+                    response.ErrorMessages = new List<string>() { "There is no user with the email provided" };
+                    response.StatusCode = 404;
+                    response.DisplayMessage = "Error";
+                    return response;
+                }
+                findUser.SuspendUser = true;
+                var updateUser = await _accountRepo.UpdateUserInfo(findUser);
+                if (updateUser == false)
+                {
+                    response.ErrorMessages = new List<string>() { "Error in suspending user" };
+                    response.StatusCode = StatusCodes.Status400BadRequest;
+                    response.DisplayMessage = "Error";
+                    return response;
+                }
+
+                response.StatusCode = StatusCodes.Status200OK;
+                response.DisplayMessage = "Success";
+                response.Result = "Successfully suspend user";
+                return response;
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+                response.ErrorMessages = new List<string>() { "Error in suspending user" };
+                response.StatusCode = 500;
+                response.DisplayMessage = "Error";
+                return response;
+            }
+        }
+        public async Task<ResponseDto<string>> UnSuspendUserAsync(string useremail)
+        {
+            var response = new ResponseDto<string>();
+            try
+            {
+                var findUser = await _accountRepo.FindUserByEmailAsync(useremail);
+                if (findUser == null)
+                {
+                    response.ErrorMessages = new List<string>() { "There is no user with the email provided" };
+                    response.StatusCode = 404;
+                    response.DisplayMessage = "Error";
+                    return response;
+                }
+                findUser.SuspendUser = false;
+                var updateUser = await _accountRepo.UpdateUserInfo(findUser);
+                if (updateUser == false)
+                {
+                    response.ErrorMessages = new List<string>() { "Error in unsuspending user" };
+                    response.StatusCode = StatusCodes.Status400BadRequest;
+                    response.DisplayMessage = "Error";
+                    return response;
+                }
+                response.StatusCode = StatusCodes.Status200OK;
+                response.DisplayMessage = "Success";
+                response.Result = "Successfully unsuspend user";
+                return response;
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+                response.ErrorMessages = new List<string>() { "Error in unsuspending user" };
+                response.StatusCode = 500;
+                response.DisplayMessage = "Error";
+                return response;
+            }
+        }
+        public async Task<ResponseDto<DisplayFindUserDTO>> GetUserFullDetails(string userid)
+        {
+            var response = new ResponseDto<DisplayFindUserDTO>();
+            try
+            {
+                
+                var findUser = await _accountRepo.FindUserByIdAsync(userid);
+                if (findUser == null)
+                {
+                    response.ErrorMessages = new List<string>() { "There is no user with the email provided" };
+                    response.StatusCode = 404;
+                    response.DisplayMessage = "Error";
+                    return response;
+                }
+                var mapuser = _mapper.Map<DisplayFindUserDTO>(findUser);
+                response.Result = mapuser;
+                response.StatusCode = 200;
+                response.DisplayMessage = "Successful";
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+                response.ErrorMessages = new List<string>() { "Error in retrieving user details" };
                 response.StatusCode = 500;
                 response.DisplayMessage = "Error";
                 return response;
