@@ -39,7 +39,7 @@ namespace Dating.API.Controllers
 
 
         }
-
+        [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpGet("webhook/confirm-payment")]
         public async Task<IActionResult> ConfirmPayment(string token)
         {
