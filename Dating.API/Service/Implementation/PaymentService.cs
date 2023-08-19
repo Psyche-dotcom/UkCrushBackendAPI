@@ -164,13 +164,13 @@ namespace Dating.API.Service.Implementation
                 var time = 0;
                 if(retrieveOrder.Amount == ((decimal)Amount.Type1).ToString("0.00"))
                 {
-                    time = 5;
+                    time = 10;
                 }else if (retrieveOrder.Amount == ((decimal)Amount.Type2).ToString("0.00"))
                 {
-                    time = 10;
+                    time = 30;
                 }else if (retrieveOrder.Amount == ((decimal)Amount.Type3).ToString("0.00"))
                 {
-                    time = 20;
+                    time = 60;
                 }
                 var addtimeDto = new AddTimeDto()
                 {

@@ -36,8 +36,8 @@
 
     public enum Amount
     {
-        Type1 = 10,
-        Type2 = 100,
-        Type3 = 1000
+        Type1 = 17,
+        Type2 = 50,
+        Type3 = 100,
     }
 }
