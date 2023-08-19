@@ -24,53 +24,28 @@ namespace Dating.API.Controllers
             _cache = cache;
         }
 
-        [HttpPost("available/{page_number}")]
+        [HttpGet("available/{page_number}")]
         public async Task<IActionResult> GetCamGirlAvailableAsync(int page_number)
         {
-            var cacheKey = $"GetCamGirlAvailableAsync_{page_number}";
-            if (_cache.TryGetValue(cacheKey, out ResponseDto<PaginatedUser> result))
+           var result = await _camGirlService.GetCamGirlsAvailableAsync(page_number, 5);
+            if (result.StatusCode == 200)
             {
                 return Ok(result);
             }
+            else if (result.StatusCode == 404)
+            {
+                return NotFound(result);
+            }
             else
             {
-                try
-                {
-                    await semaphore.WaitAsync();
-                    if (_cache.TryGetValue(cacheKey, out result))
-                    {
-                        return Ok(result);
-                    }
-                    else
-                    {
-                        var cacheEntryOptions = new MemoryCacheEntryOptions()
-                        .SetSlidingExpiration(TimeSpan.FromSeconds(120))
-                        .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
-                        .SetPriority(CacheItemPriority.Normal)
-                        .SetSize(1024);
-                        result = await _camGirlService.GetCamGirlsAvailableAsync(page_number, 5);
-                        _cache.Set(cacheKey, result, cacheEntryOptions);
-                        if (result.StatusCode == 200)
-                        {
-                            return Ok(result);
-                        }
-                        else if (result.StatusCode == 404)
-                        {
-                            return NotFound(result);
-                        }
-                        else
-                        {
-                            return BadRequest(result);
-                        }
-                    }
-                }
-                finally { semaphore.Release(); }
+                return BadRequest(result);
             }
+           
         }
 
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "ADMIN")]
         [HttpGet("all/{per_page_size}/{page_number}")]
-        public async Task<IActionResult> GetCamGirlAvailableAsync(int page_number, int per_page_size)
+        public async Task<IActionResult> GetAllCamGirlAsync(int page_number, int per_page_size)
         {
             var cacheKey = $"GetCamGirlAvailableAsync_{page_number}_{per_page_size}";
             if (_cache.TryGetValue(cacheKey, out ResponseDto<PaginatedUser> result))
@@ -122,11 +97,10 @@ namespace Dating.API.Controllers
                 await semaphore.WaitAsync();
                 for (int pageNumber = 1; pageNumber <= 100; pageNumber++)
                 {
-                    var cacheKey = $"GetCamGirlAvailableAsync_{pageNumber}";
-                    _cache.Remove(cacheKey);
+                    
                     for (int pageSize = 1; pageSize <= 100; pageSize++)
                     {
-                        cacheKey = $"GetCamGirlAvailableAsync_{pageNumber}_{pageSize}";
+                      var cacheKey = $"GetCamGirlAvailableAsync_{pageNumber}_{pageSize}";
                         _cache.Remove(cacheKey);
                     }
                 }
@@ -157,11 +131,9 @@ namespace Dating.API.Controllers
                 await semaphore.WaitAsync();
                 for (int pageNumber = 1; pageNumber <= 100; pageNumber++)
                 {
-                    var cacheKey = $"GetCamGirlAvailableAsync_{pageNumber}";
-                    _cache.Remove(cacheKey);
                     for (int pageSize = 1; pageSize <= 100; pageSize++)
                     {
-                        cacheKey = $"GetCamGirlAvailableAsync_{pageNumber}_{pageSize}";
+                        var cacheKey = $"GetCamGirlAvailableAsync_{pageNumber}_{pageSize}";
                         _cache.Remove(cacheKey);
                     }
                 }
