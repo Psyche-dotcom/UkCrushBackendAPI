@@ -525,9 +525,9 @@ namespace Dating.API.Service.Implementation
                 return response;
             }
         }
-        public async Task<ResponseDto<DisplayFindUserDTO>> GetUserFullDetails(string userid)
+        public async Task<ResponseDto<DisplayUserWithRoleDto>> GetUserFullDetails(string userid)
         {
-            var response = new ResponseDto<DisplayFindUserDTO>();
+            var response = new ResponseDto<DisplayUserWithRoleDto>();
             try
             {
                 
@@ -539,7 +539,9 @@ namespace Dating.API.Service.Implementation
                     response.DisplayMessage = "Error";
                     return response;
                 }
-                var mapuser = _mapper.Map<DisplayFindUserDTO>(findUser);
+                var mapuser = _mapper.Map<DisplayUserWithRoleDto>(findUser);
+                var getUserRole = await _accountRepo.GetUserRoles(findUser);
+                mapuser.Role = getUserRole[0];
                 response.Result = mapuser;
                 response.StatusCode = 200;
                 response.DisplayMessage = "Successful";

@@ -25,6 +25,6 @@ namespace Dating.API.Service.Interface
         Task<ResponseDto<string>> UnSuspendUserAsync(string useremail);
         Task<ResponseDto<string>> UpdateUserRole(string email, string role);
 
-        Task<ResponseDto<DisplayFindUserDTO>> GetUserFullDetails(string userid);
+        Task<ResponseDto<DisplayUserWithRoleDto>> GetUserFullDetails(string userid);
     }
 }

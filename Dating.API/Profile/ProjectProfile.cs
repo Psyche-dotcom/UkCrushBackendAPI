@@ -9,6 +9,7 @@ namespace Dating.API.Profiles
         public ProjectProfile()
         {
             CreateMap<ApplicationUser, DisplayFindUserDTO>().ReverseMap();
+            CreateMap<ApplicationUser, DisplayUserWithRoleDto>().ReverseMap();
             CreateMap<ApplicationUser, UserTimeAvailableDto>().ReverseMap();
             CreateMap<Timers, AddTimeDto>().ReverseMap();
             CreateMap<ApplicationUser, SignUp>()
