@@ -65,10 +65,10 @@ namespace Dating.API.Controllers
             return Ok(data);
         }
         [Authorize(AuthenticationSchemes = "Bearer")]
-        [HttpGet("user/all/{user_id}")]
-        public async Task<IActionResult> UserPaymentHistory(string user_id)
+        [HttpGet("user/all/{user_id}/{perPageSize}/{pageNumber}")]
+        public async Task<IActionResult> UserPaymentHistory(string user_id, int pageNumber, int perPageSize)
         {
-            var result = await _pay.RetrieveUserAllPaymentAsync(user_id);
+            var result = await _pay.RetrieveUserAllPaymentAsync(user_id, pageNumber, perPageSize);
             if (result.StatusCode == 200)
             {
                 return Ok(result);
@@ -83,10 +83,10 @@ namespace Dating.API.Controllers
             }
         }
         [Authorize(AuthenticationSchemes = "Bearer", Roles ="ADMIN")]
-        [HttpGet("user/all")]
-        public async Task<IActionResult> AllPaymentHistory()
+        [HttpGet("user/all/{perPageSize}/{pageNumber}")]
+        public async Task<IActionResult> AllPaymentHistory(int pageNumber, int perPageSize)
         {
-            var result = await _pay.RetrieveAllPaymentAsync();
+            var result = await _pay.RetrieveAllPaymentAsync(pageNumber, perPageSize);
             if (result.StatusCode == 200)
             {
                 return Ok(result);

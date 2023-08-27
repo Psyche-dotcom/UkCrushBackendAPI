@@ -112,15 +112,15 @@ namespace Dating.API.Service.Implementation
             }
         }
 
-        public async Task<ResponseDto<string>> SetCamgirlAsNotTaken(string camGirlEmail)
+        public async Task<ResponseDto<string>> SetCamgirlAsNotTaken(string camGirlUserName)
         {
             var response = new ResponseDto<string>();
             try
             {
-                var findUser = await _accountRepo.FindUserByEmailAsync(camGirlEmail);
+                var findUser = await _camGirlRepo.FindCamGirlbyUserName(camGirlUserName); ;
                 if (findUser == null)
                 {
-                    response.ErrorMessages = new List<string>() { "There is no cam girl with the email provided" };
+                    response.ErrorMessages = new List<string>() { "There is no cam girl with the username provided" };
                     response.StatusCode = 404;
                     response.DisplayMessage = "Error";
                     return response;

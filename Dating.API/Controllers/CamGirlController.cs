@@ -122,10 +122,10 @@ namespace Dating.API.Controllers
             }
         }
 
-        [HttpPost("unmatch/{email}")]
-        public async Task<IActionResult> UnMatchCamgirl(string email)
+        [HttpPost("unmatch/{camGirlUserName}")]
+        public async Task<IActionResult> UnMatchCamgirl(string camGirlUserName)
         {
-            var result = await _camGirlService.SetCamgirlAsNotTaken(email);
+            var result = await _camGirlService.SetCamgirlAsNotTaken(camGirlUserName);
             try
             {
                 await semaphore.WaitAsync();
@@ -173,7 +173,7 @@ namespace Dating.API.Controllers
                     else
                     {
                         var cacheEntryOptions = new MemoryCacheEntryOptions()
-                        .SetSlidingExpiration(TimeSpan.FromSeconds(120))
+                        .SetSlidingExpiration(TimeSpan.FromSeconds(30))
                         .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
                         .SetPriority(CacheItemPriority.Normal)
                         .SetSize(1024);

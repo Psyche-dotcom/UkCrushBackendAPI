@@ -6,7 +6,7 @@ namespace Dating.API.Service.Interface
     {
         Task<ResponseDto<Dictionary<string, string>>> MakeOrder(string paymentType, string userid);
         Task<ResponseDto<string>> ConfirmPayment(string token);
-        Task<ResponseDto<IEnumerable<PaymentWithUserInfo>>> RetrieveUserAllPaymentAsync(string userid);
-        Task<ResponseDto<IEnumerable<PaymentWithUserInfo>>> RetrieveAllPaymentAsync();
+        Task<ResponseDto<PaginatedPaymentInfo>> RetrieveUserAllPaymentAsync(string userid, int pageNumber, int perPageSize);
+        Task<ResponseDto<PaginatedPaymentInfo>> RetrieveAllPaymentAsync(int pageNumber, int perPageSize);
     }
 }

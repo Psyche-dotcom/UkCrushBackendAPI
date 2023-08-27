@@ -9,7 +9,7 @@ namespace Data.Repository.Interface
         Task<Payments> GetPaymentById(string OrderReferenceId);
         Task<bool> AddPayments(Payments payments);
         Task<bool> UpdatePayments(Payments payments);
-        Task<IEnumerable<PaymentWithUserInfo>> RetrieveAllPaymentAsync();
-        Task<IEnumerable<PaymentWithUserInfo>> RetrieveUserAllPaymentAsync(string userid);
+        Task<PaginatedPaymentInfo> RetrieveAllPaymentAsync(int pageNumber, int perPageSize);
+        Task<PaginatedPaymentInfo> RetrieveUserAllPaymentAsync(string userid, int pageNumber, int perPageSize);
     }
 }

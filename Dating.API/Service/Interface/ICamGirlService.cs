@@ -8,7 +8,7 @@ namespace Dating.API.Service.Interface
 
         Task<ResponseDto<string>> SetCamgirlAsTaken(string camGirlEmail);
 
-        Task<ResponseDto<string>> SetCamgirlAsNotTaken(string camGirlEmail);
+        Task<ResponseDto<string>> SetCamgirlAsNotTaken(string camGirlUserName);
 
         Task<ResponseDto<PaginatedUser>> GetAllCamGirlsAsync(int pageNumber, int perPageSize);
 

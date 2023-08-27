@@ -43,6 +43,7 @@ namespace Data.Repository.Implementation
                 {
                     UserName = u.User.UserName,
                     Email = u.User.Email,
+                    SuspendUser = u.User.SuspendUser,
                     FirstName = u.User.FirstName,
                     LastName = u.User.LastName,
                     PhoneNumber = u.User.PhoneNumber,
@@ -90,6 +91,7 @@ namespace Data.Repository.Implementation
                 {
                     UserName = u.User.UserName,
                     Email = u.User.Email,
+                    SuspendUser= u.User.SuspendUser,
                     FirstName = u.User.FirstName,
                     LastName = u.User.LastName,
                     PhoneNumber = u.User.PhoneNumber,

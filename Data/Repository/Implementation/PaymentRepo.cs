@@ -19,9 +19,11 @@ namespace Data.Repository.Implementation
         {
             return await _context.Payments.FirstOrDefaultAsync(x => x.OrderReferenceId == OrderReferenceId);
         }
-        public async Task<IEnumerable<PaymentWithUserInfo>> RetrieveAllPaymentAsync()
+        public async Task<PaginatedPaymentInfo> RetrieveAllPaymentAsync(int pageNumber, int perPageSize)
         {
-            var payment = await _context.Payments.Include(u => u.User).Select(p => new PaymentWithUserInfo
+            pageNumber = pageNumber < 1 ? 1 : pageNumber;
+            perPageSize = perPageSize < 1 ? 5 : perPageSize;
+            var payment = _context.Payments.Include(u => u.User).Select(p => new PaymentWithUserInfo
             {
                 Id = p.Id,
                 Amount = p.Amount,
@@ -36,12 +38,29 @@ namespace Data.Repository.Implementation
                 UserName = p.User.UserName,
                 FirstName = p.User.FirstName,
                 Email = p.User.Email
-            }).ToListAsync();
-            return payment;
+            });
+            var paginatedPayment = await payment
+                .Skip((pageNumber - 1) * perPageSize)
+                .Take(perPageSize)
+                .ToListAsync();
+            var totalCount = await payment.CountAsync();
+            var totalPages = (int)Math.Ceiling((double)totalCount / perPageSize);
+            var result = new PaginatedPaymentInfo
+            {
+                CurrentPage = pageNumber,
+                PageSize = perPageSize,
+                TotalPages = totalPages,
+                Payments = paginatedPayment,
+            };
+            return result;
+
+            
         }
-        public async Task<IEnumerable<PaymentWithUserInfo>> RetrieveUserAllPaymentAsync(string userid)
+        public async Task<PaginatedPaymentInfo> RetrieveUserAllPaymentAsync(string userid, int pageNumber, int perPageSize)
         {
-            var paymentsWithUserInfo = await _context.Payments
+            pageNumber = pageNumber < 1 ? 1 : pageNumber;
+            perPageSize = perPageSize < 1 ? 5 : perPageSize;
+            var paymentsWithUserInfo = _context.Payments
                 .Include(p => p.User)
                 .Where(p => p.UserId == userid)
                 .Select(p => new PaymentWithUserInfo
@@ -50,7 +69,7 @@ namespace Data.Repository.Implementation
                     Amount = p.Amount,
                     OrderReferenceId = p.OrderReferenceId,
                     Description = p.Description,
-                    UserId= p.UserId,
+                    UserId = p.UserId,
                     PaymentType = p.PaymentType,
                     CreatedPaymentTime = p.CreatedPaymentTime,
                     CompletePaymentTime = p.CompletePaymentTime,
@@ -59,10 +78,23 @@ namespace Data.Repository.Implementation
                     UserName = p.User.UserName,
                     FirstName = p.User.FirstName,
                     Email = p.User.Email
-                })
+                });
+            var paginatedPayment = await paymentsWithUserInfo
+                .Skip((pageNumber - 1) * perPageSize)
+                .Take(perPageSize)
                 .ToListAsync();
+            var totalCount = await paymentsWithUserInfo.CountAsync();
+            var totalPages = (int)Math.Ceiling((double)totalCount / perPageSize);
+            var result = new PaginatedPaymentInfo
+            {
+                CurrentPage = pageNumber,
+                PageSize = perPageSize,
+                TotalPages = totalPages,
+                Payments = paginatedPayment,
+            };
+            return result;
 
-            return paymentsWithUserInfo;
+            
         }
 
 

@@ -168,6 +168,7 @@ namespace Data.Repository.Implementation
                     PhoneNumber = u.User.PhoneNumber,
                     ProfilePicture = u.User.ProfilePicture,
                     Gender = u.User.Gender,
+                    SuspendUser = u.User.SuspendUser,
                     Id = u.User.Id,
                     TimeAvailable = u.User.TimeAvailable
                 });

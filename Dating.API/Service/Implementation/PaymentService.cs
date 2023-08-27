@@ -202,9 +202,9 @@ namespace Dating.API.Service.Implementation
             }
         }
 
-        public async Task<ResponseDto<IEnumerable<PaymentWithUserInfo>>> RetrieveUserAllPaymentAsync(string userid)
+        public async Task<ResponseDto<PaginatedPaymentInfo>> RetrieveUserAllPaymentAsync(string userid, int pageNumber, int perPageSize)
         {
-            var response = new ResponseDto<IEnumerable<PaymentWithUserInfo>>();
+            var response = new ResponseDto<PaginatedPaymentInfo>();
             try
             {
                 var checkUserExist = await _accountRepo.FindUserByIdAsync(userid);
@@ -215,7 +215,7 @@ namespace Dating.API.Service.Implementation
                     response.DisplayMessage = "Error";
                     return response;
                 }
-                var retrieveUserPayment = await _paymentdb.RetrieveUserAllPaymentAsync(userid);
+                var retrieveUserPayment = await _paymentdb.RetrieveUserAllPaymentAsync(userid,pageNumber,perPageSize);
                 response.DisplayMessage = "Successful";
                 response.Result = retrieveUserPayment;
                 response.StatusCode = StatusCodes.Status200OK;
@@ -231,13 +231,13 @@ namespace Dating.API.Service.Implementation
             }
             
         }
-        public async Task<ResponseDto<IEnumerable<PaymentWithUserInfo>>> RetrieveAllPaymentAsync()
+        public async Task<ResponseDto<PaginatedPaymentInfo>> RetrieveAllPaymentAsync(int pageNumber, int perPageSize)
         {
-            var response = new ResponseDto<IEnumerable<PaymentWithUserInfo>>();
+            var response = new ResponseDto<PaginatedPaymentInfo>();
             try
             {
                 
-                var retrieveUserPayment = await _paymentdb.RetrieveAllPaymentAsync();
+                var retrieveUserPayment = await _paymentdb.RetrieveAllPaymentAsync(pageNumber, perPageSize);
                 response.DisplayMessage = "Successful";
                 response.Result = retrieveUserPayment;
                 response.StatusCode = StatusCodes.Status200OK;
