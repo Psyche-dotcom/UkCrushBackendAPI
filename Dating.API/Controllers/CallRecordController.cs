@@ -79,7 +79,7 @@ namespace Dating.API.Controllers
                     else
                     {
                         var cacheEntryOptions = new MemoryCacheEntryOptions()
-                        .SetSlidingExpiration(TimeSpan.FromSeconds(120))
+                        .SetSlidingExpiration(TimeSpan.FromSeconds(10))
                         .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
                         .SetPriority(CacheItemPriority.Normal)
                         .SetSize(1024);
