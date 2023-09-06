@@ -22,6 +22,7 @@ namespace Dating.API.Controllers
             _cache = cache;
         }
 
+        [AllowAnonymous]
         [HttpPost("add")]
         public async Task<IActionResult> AddCallRecord(AddCallRecord addCallRecord)
         {
