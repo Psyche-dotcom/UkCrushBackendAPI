@@ -8,7 +8,7 @@ namespace Model.Enitities
         [Key]
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
-        public int TimeUsed { get; set; }
+        public decimal TimeUsed { get; set; }
         public DateTime Date { get; set; } = DateTime.UtcNow;
         public string UserId { get; set; }
 

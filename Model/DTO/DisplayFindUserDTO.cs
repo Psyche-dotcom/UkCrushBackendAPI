@@ -13,6 +13,6 @@ namespace Model.DTO
         public string PhoneNumber { get; set; }
         public string UserName { get; set; }
         public bool SuspendUser { get; set; }
-        public int TimeAvailable { get; set; }
+        public decimal TimeAvailable { get; set; }
     }
 }

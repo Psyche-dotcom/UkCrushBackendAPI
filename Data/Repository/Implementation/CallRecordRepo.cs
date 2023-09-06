@@ -32,7 +32,7 @@ namespace Data.Repository.Implementation
             perPageSize = perPageSize < 1 ? 5 : perPageSize;
             var Users = _context.CallRecords
             .GroupBy(cr => cr.CamgirlId);
-            long totalMinute = await _context.CallRecords.SumAsync(u => u.TimeUsed);
+            decimal totalMinute = await _context.CallRecords.SumAsync(u => u.TimeUsed);
             var totalCount = await Users.CountAsync();
             var totalPages = (int)Math.Ceiling((double)totalCount / perPageSize);
             var paginated = await Users.Select(g => new
@@ -77,7 +77,7 @@ namespace Data.Repository.Implementation
             pageNumber = pageNumber < 1 ? 1 : pageNumber;
             perPageSize = perPageSize < 1 ? 5 : perPageSize;
             var totalCount = await getAllCallRecord.CountAsync();
-            long totalMinute = await getAllCallRecord.SumAsync(u => u.TimeUsed);
+            decimal totalMinute = await getAllCallRecord.SumAsync(u => u.TimeUsed);
             var totalPages = (int)Math.Ceiling((double)totalCount / perPageSize);
             var paginated = await getAllCallRecord.Skip((pageNumber - 1) * perPageSize).Take(perPageSize).ToListAsync();
 
@@ -98,7 +98,7 @@ namespace Data.Repository.Implementation
             pageNumber = pageNumber < 1 ? 1 : pageNumber;
             perPageSize = perPageSize < 1 ? 5 : perPageSize;
             var totalCount = await getUserCallRecord.CountAsync(u => u.UserId == userid);
-            long totalMinute = await getUserCallRecord.Where(u => u.UserId == userid).SumAsync(u => u.TimeUsed);
+            decimal totalMinute = await getUserCallRecord.Where(u => u.UserId == userid).SumAsync(u => u.TimeUsed);
             var totalPages = (int)Math.Ceiling((double)totalCount / perPageSize);
             var paginated = await getUserCallRecord.Where(u => u.UserId == userid).Skip((pageNumber - 1) * perPageSize).Take(perPageSize).ToListAsync();
 
