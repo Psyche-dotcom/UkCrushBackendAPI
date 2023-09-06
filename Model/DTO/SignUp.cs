@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Model.DTO
 {
-    public class SignUp : SignInModel
+    public class SignUp 
     {
         [Required]
         public string FirstName { get; set; }

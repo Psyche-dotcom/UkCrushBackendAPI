@@ -7,6 +7,7 @@ namespace Dating.API.Service.Interface
         Task<ResponseDto<string>> RegisterUser(SignUp signUp, string Role);
 
         Task<ResponseDto<LoginResultDto>> LoginUser(SignInModel signIn);
+        Task<ResponseDto<DisplayUserWithRoleDto>> GetUserFullDetailsWithUserName(string userName);
 
         Task<ResponseDto<string>> LogoutUser(string UserEmail);
 

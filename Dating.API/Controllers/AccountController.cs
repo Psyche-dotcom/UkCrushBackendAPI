@@ -172,6 +172,25 @@ namespace Dating.API.Controllers
                 return BadRequest(result);
             }
         }
+        
+        [HttpGet("me/username/info/{username}")]
+        public async Task<IActionResult> GetUserFullDetailByUserName(string username)
+        {
+
+            var result = await _accountService.GetUserFullDetailsWithUserName(username);
+            if (result.StatusCode == 200)
+            {
+                return Ok(result);
+            }
+            else if (result.StatusCode == 404)
+            {
+                return NotFound(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
+        }
         [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpPatch("update_details/{email}")]
         public async Task<IActionResult> UpdateUserInfo(string email, UpdateUserDto updateUser)

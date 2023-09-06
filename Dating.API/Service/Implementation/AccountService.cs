@@ -556,5 +556,36 @@ namespace Dating.API.Service.Implementation
                 return response;
             }
         }
+        public async Task<ResponseDto<DisplayUserWithRoleDto>> GetUserFullDetailsWithUserName(string userName)
+        {
+            var response = new ResponseDto<DisplayUserWithRoleDto>();
+            try
+            {
+
+                var findUser = await _accountRepo.FIndUserByUserName(userName);
+                if (findUser == null)
+                {
+                    response.ErrorMessages = new List<string>() { "There is no user with the email provided" };
+                    response.StatusCode = 404;
+                    response.DisplayMessage = "Error";
+                    return response;
+                }
+                var mapuser = _mapper.Map<DisplayUserWithRoleDto>(findUser);
+                var getUserRole = await _accountRepo.GetUserRoles(findUser);
+                mapuser.Role = getUserRole[0];
+                response.Result = mapuser;
+                response.StatusCode = 200;
+                response.DisplayMessage = "Successful";
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+                response.ErrorMessages = new List<string>() { "Error in retrieving user details" };
+                response.StatusCode = 500;
+                response.DisplayMessage = "Error";
+                return response;
+            }
+        }
     }
 }

@@ -29,6 +29,12 @@ namespace Data.Repository.Implementation
             }
             return false;
         }
+        public async Task<ApplicationUser> FIndUserByUserName(string UserName)
+        {
+            var User = await _context.Users.FirstOrDefaultAsync(u=>u.UserName == UserName);
+          
+            return User;
+        }
 
         public async Task<bool> RemoveRoleAsync(ApplicationUser user, IList<string> role)
         {

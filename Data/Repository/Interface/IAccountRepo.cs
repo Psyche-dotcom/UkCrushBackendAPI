@@ -16,6 +16,7 @@ namespace Data.Repository.Interface
         Task<bool> UpdateUserStatusTaken(ApplicationUser user);
 
         Task<bool> UpdateUserStatusNotTaken(ApplicationUser user);
+        Task<ApplicationUser> FIndUserByUserName(string UserName);
 
         Task<bool> CheckEmailConfirmed(ApplicationUser user);
 
