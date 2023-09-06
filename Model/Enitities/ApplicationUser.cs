@@ -11,7 +11,7 @@ namespace Model.Enitities
         public string ProfilePicture { get; set; } = string.Empty;
         public int Age { get; set; }
         public string Location { get; set; }
-        public decimal TimeAvailable { get; set; }
+        public decimal TimeAvailable { get; set; } = 0.15m;
         public bool IsUserOnline { get; set; } = false;
         public bool UserIsTaken { get; set; } = false;
         public bool SuspendUser { get; set; } = false;
