@@ -47,6 +47,7 @@ namespace Dating.API.Service.Implementation
                     return response;
                 }
                 var mapAccount = _mapper.Map<ApplicationUser>(signUp);
+                mapAccount.TimeAvailable = 0.15m;
                 var createUser = await _accountRepo.SignUpAsync(mapAccount, signUp.Password);
                 if (createUser == null)
                 {

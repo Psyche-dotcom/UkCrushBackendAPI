@@ -121,7 +121,7 @@ namespace Dating.API.Controllers
                 return BadRequest(result);
             }
         }
-
+        [AllowAnonymous]
         [HttpPost("unmatch/{camGirlUserName}")]
         public async Task<IActionResult> UnMatchCamgirl(string camGirlUserName)
         {
