@@ -104,44 +104,18 @@ namespace Dating.API.Controllers
         [HttpGet("{username}")]
         public async Task<IActionResult> GetCamgirl(string username)
         {
-            var cacheKey = $"GetCamgirl_{username}";
-            if (_cache.TryGetValue(cacheKey, out ResponseDto<DisplayFindUserDTO> result))
+            var result = await _camGirlService.FindCamGirlbyUserName(username);
+            if (result.StatusCode == 200)
             {
                 return Ok(result);
             }
+            else if (result.StatusCode == 404)
+            {
+                return NotFound(result);
+            }
             else
             {
-                try
-                {
-                    await semaphore.WaitAsync();
-                    if (_cache.TryGetValue(cacheKey, out result))
-                    {
-                        return Ok(result);
-                    }
-                    else
-                    {
-                        var cacheEntryOptions = new MemoryCacheEntryOptions()
-                        .SetSlidingExpiration(TimeSpan.FromSeconds(30))
-                        .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
-                        .SetPriority(CacheItemPriority.Normal)
-                        .SetSize(1024);
-                        result = await _camGirlService.FindCamGirlbyUserName(username);
-                        _cache.Set(cacheKey, result, cacheEntryOptions);
-                        if (result.StatusCode == 200)
-                        {
-                            return Ok(result);
-                        }
-                        else if (result.StatusCode == 404)
-                        {
-                            return NotFound(result);
-                        }
-                        else
-                        {
-                            return BadRequest(result);
-                        }
-                    }
-                }
-                finally { semaphore.Release(); }
+                return BadRequest(result);
             }
         }
     }
