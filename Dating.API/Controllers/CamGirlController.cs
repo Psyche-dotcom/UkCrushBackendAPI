@@ -47,44 +47,18 @@ namespace Dating.API.Controllers
         [HttpGet("all/{per_page_size}/{page_number}")]
         public async Task<IActionResult> GetAllCamGirlAsync(int page_number, int per_page_size)
         {
-            var cacheKey = $"GetCamGirlAvailableAsync_{page_number}_{per_page_size}";
-            if (_cache.TryGetValue(cacheKey, out ResponseDto<PaginatedUser> result))
+            var result = await _camGirlService.GetAllCamGirlsAsync(page_number, per_page_size);
+            if (result.StatusCode == 200)
             {
                 return Ok(result);
             }
+            else if (result.StatusCode == 404)
+            {
+                return NotFound(result);
+            }
             else
             {
-                try
-                {
-                    await semaphore.WaitAsync();
-                    if (_cache.TryGetValue(cacheKey, out result))
-                    {
-                        return Ok(result);
-                    }
-                    else
-                    {
-                        var cacheEntryOptions = new MemoryCacheEntryOptions()
-                        .SetSlidingExpiration(TimeSpan.FromSeconds(120))
-                        .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
-                        .SetPriority(CacheItemPriority.Normal)
-                        .SetSize(1024);
-                        result = await _camGirlService.GetAllCamGirlsAsync(page_number, per_page_size);
-                        _cache.Set(cacheKey, result, cacheEntryOptions);
-                        if (result.StatusCode == 200)
-                        {
-                            return Ok(result);
-                        }
-                        else if (result.StatusCode == 404)
-                        {
-                            return NotFound(result);
-                        }
-                        else
-                        {
-                            return BadRequest(result);
-                        }
-                    }
-                }
-                finally { semaphore.Release(); }
+                return BadRequest(result);
             }
         }
 
@@ -92,20 +66,6 @@ namespace Dating.API.Controllers
         public async Task<IActionResult> MatchCamgirl(MatchGirlDto matchGirl)
         {
             var result = await _camGirlService.SetCamgirlAsTaken(matchGirl.Email);
-            try
-            {
-                await semaphore.WaitAsync();
-                for (int pageNumber = 1; pageNumber <= 100; pageNumber++)
-                {
-                    
-                    for (int pageSize = 1; pageSize <= 100; pageSize++)
-                    {
-                      var cacheKey = $"GetCamGirlAvailableAsync_{pageNumber}_{pageSize}";
-                        _cache.Remove(cacheKey);
-                    }
-                }
-            }
-            finally { semaphore.Release(); }
             if (result.StatusCode == 200)
             {
                 var message = new Message(new string[] { matchGirl.Email }, "Join Room Link", $"<p>Click <a href={matchGirl.RoomLink}>here</a> to join the client</p>");
@@ -120,25 +80,13 @@ namespace Dating.API.Controllers
             {
                 return BadRequest(result);
             }
+
         }
         [AllowAnonymous]
         [HttpPost("unmatch/{camGirlUserName}")]
         public async Task<IActionResult> UnMatchCamgirl(string camGirlUserName)
         {
             var result = await _camGirlService.SetCamgirlAsNotTaken(camGirlUserName);
-            try
-            {
-                await semaphore.WaitAsync();
-                for (int pageNumber = 1; pageNumber <= 100; pageNumber++)
-                {
-                    for (int pageSize = 1; pageSize <= 100; pageSize++)
-                    {
-                        var cacheKey = $"GetCamGirlAvailableAsync_{pageNumber}_{pageSize}";
-                        _cache.Remove(cacheKey);
-                    }
-                }
-            }
-            finally { semaphore.Release(); }
             if (result.StatusCode == 200)
             {
                 return Ok(result);
